@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -27,36 +29,24 @@ function Register() {
       return;
     }
 
-    console.log("Kayıt verileri", formData);
-
-
-    // Mevcut kullanıcıları çek
     const users = JSON.parse(localStorage.getItem("users") || "[]");
 
-    // Aynı email ile kayıt var mı kontrol et
     const existingUser = users.find((u: any) => u.email === formData.email);
     if (existingUser) {
-        setMessage("Bu e-posta zaten kayıtlı!");
-        return;
+      setMessage("Bu e-posta zaten kayıtlı!");
+      return;
     }
 
-    // Yeni kullanıcıyı ekle
     const newUser = {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
     };
     users.push(newUser);
     localStorage.setItem("users", JSON.stringify(users));
 
-    setMessage("Kayıt başarıyla oluşturuldu!");
-
-    setFormData({
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
+    // Kayıt sonrası login sayfasına yönlendir
+    navigate("/login");
   };
 
   return (
@@ -115,6 +105,16 @@ function Register() {
           <button type="submit" className="btn btn-primary w-100">
             Kayıt Ol
           </button>
+
+          <p className="text-center mt-3">
+            Zaten hesabın var mı?{" "}
+            <span
+              onClick={() => navigate("/login")}
+              style={{ cursor: "pointer", color: "blue" }}
+            >
+              Giriş yap
+            </span>
+          </p>
         </form>
       </div>
     </div>

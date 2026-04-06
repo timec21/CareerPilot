@@ -3,12 +3,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import { useNavigate } from "react-router-dom";
 
+import { useAuth } from "../context/AuthContext";
+
 function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  // component içinde
+  const { login } = useAuth();
 
   const [message, setMessage] = useState("");
 
@@ -23,15 +28,10 @@ function Login() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const success = login(formData.email, formData.password);
 
-    const user = users.find(
-      (u: any) =>
-        u.email === formData.email && u.password === formData.password,
-    );
-
-    if (user) {
-      setMessage("Giriş başarılı!");
+    if (success) {
+      navigate("/dashboard");
     } else {
       setMessage("E-posta veya şifre hatalı!");
     }
