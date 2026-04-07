@@ -54,7 +54,7 @@ const Navbar = () => {
               </button>
             </li>
 
-            {/* En Sağda: Menü */}
+            {/* Menü */}
             <li className="nav-item dropdown">
               <a 
                 className="nav-link dropdown-toggle" 
