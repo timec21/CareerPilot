@@ -40,7 +40,7 @@ function StatusChart() {
 }
 
 function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const stats = [
@@ -78,10 +78,7 @@ function Dashboard() {
     <div className="container mt-4">
       {/* Navbar */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Hoş geldin, {user?.username} 👋</h2>
-        <button className="btn btn-outline-danger" onClick={logout}>
-          Çıkış Yap
-        </button>
+        <h2>Hoş geldin, {user?.username} </h2>
       </div>
 
       {/* İstatistik Kartları */}
