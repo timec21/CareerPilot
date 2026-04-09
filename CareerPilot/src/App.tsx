@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import MainLayout from "./components/MainLayout";
 import Profile from "./pages/Profile";
+import Applications from "./pages/Applications"
 
 function App() {
   return (
@@ -35,6 +36,14 @@ function App() {
         />
       </Route>
       <Route path="/" element={<Navigate to="/dashboard" />} />
+      <Route
+        path="/applications"
+        element={
+          <ProtectedRoute>
+            <Applications />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
