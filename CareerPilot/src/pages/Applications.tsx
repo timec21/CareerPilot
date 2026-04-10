@@ -1,10 +1,13 @@
 import { useApplications } from "../context/ApplicationContext";
 import { useNavigate } from "react-router-dom";
 import ApplicationCard from "../components/ApplicationCard";
+import { useState } from "react";
+import ApplicationModal from "../components/ApplicationModal";
 
 function Applications() {
   const { applications } = useApplications();
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="container mt-4">
@@ -17,7 +20,9 @@ function Applications() {
           >
             ← Dashboard
           </button>
-          <button className="btn btn-primary">+ Yeni Başvuru</button>
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            + Yeni Başvuru
+          </button>
         </div>
       </div>
 
@@ -36,7 +41,10 @@ function Applications() {
           ))}
         </div>
       )}
+
+      {showModal && <ApplicationModal onClose={() => setShowModal(false)} />}
     </div>
+    
   );
 }
 
