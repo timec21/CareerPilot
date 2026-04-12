@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import ApplicationCard from "../components/ApplicationCard";
 import { useState } from "react";
 import ApplicationModal from "../components/ApplicationModal";
+import type { Application } from "../context/ApplicationContext";
 
 function Applications() {
   const { applications } = useApplications();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [editApp, setEditApp] = useState<Application | null>(null);
 
   return (
     <div className="container mt-4">
@@ -20,7 +22,10 @@ function Applications() {
           >
             ← Dashboard
           </button>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <button
+            className="btn btn-primary"
+            onClick={() => setShowModal(true)}
+          >
             + Yeni Başvuru
           </button>
         </div>
@@ -36,15 +41,22 @@ function Applications() {
         <div className="row g-4">
           {applications.map((app) => (
             <div className="col-12 col-md-6 col-lg-3 d-flex" key={app.id}>
-              <ApplicationCard app={app} />
+              <ApplicationCard app={app} onEdit={(app) => setEditApp(app)} />
             </div>
           ))}
         </div>
       )}
 
-      {showModal && <ApplicationModal onClose={() => setShowModal(false)} />}
+      {(showModal || editApp) && (
+        <ApplicationModal
+          app={editApp ?? undefined}
+          onClose={() => {
+            setShowModal(false);
+            setEditApp(null);
+          }}
+        />
+      )}
     </div>
-    
   );
 }
 

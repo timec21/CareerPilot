@@ -12,9 +12,10 @@ const statusColors: Record<Application["status"], string> = {
 
 interface Props {
   app: Application;
+  onEdit: (app: Application) => void; // ekle
 }
 
-function ApplicationCard({ app }: Props) {
+function ApplicationCard({ app, onEdit }: Props){
   const { deleteApplication, toggleFavorite } = useApplications();
 
   return (
@@ -55,7 +56,10 @@ function ApplicationCard({ app }: Props) {
 
       {/* Butonlar */}
       <div className="card-footer bg-transparent d-flex justify-content-end gap-2">
-        <button className="btn btn-sm btn-outline-primary">
+        <button
+          className="btn btn-sm btn-outline-primary"
+          onClick={() => onEdit(app)}
+        >
           <FaEdit /> Düzenle
         </button>
         <button

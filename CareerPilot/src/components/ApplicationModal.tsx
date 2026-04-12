@@ -4,6 +4,7 @@ import { useApplications } from "../context/ApplicationContext";
 
 interface Props {
   onClose: () => void;
+  app?: Application; // düzenleme için opsiyonel
 }
 
 const emptyForm = {
@@ -15,9 +16,9 @@ const emptyForm = {
   favorite: false,
 };
 
-function ApplicationModal({ onClose }: Props) {
-  const { addApplication } = useApplications();
-  const [formData, setFormData] = useState(emptyForm);
+function ApplicationModal({ onClose, app }: Props) {
+  const { addApplication, updateApplication } = useApplications();
+  const [formData, setFormData] = useState(app ?? emptyForm);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -28,7 +29,11 @@ function ApplicationModal({ onClose }: Props) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    addApplication(formData);
+    if (app) {
+      updateApplication(app.id, formData);
+    } else {
+      addApplication(formData);
+    }
     onClose();
   };
 
@@ -40,7 +45,9 @@ function ApplicationModal({ onClose }: Props) {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Yeni Başvuru Ekle</h5>
+            <h5 className="modal-title">
+              {app ? "Başvuruyu Düzenle" : "Yeni Başvuru Ekle"}
+            </h5>
             <button className="btn-close" onClick={onClose} />
           </div>
 
@@ -119,7 +126,7 @@ function ApplicationModal({ onClose }: Props) {
                 İptal
               </button>
               <button type="submit" className="btn btn-primary">
-                Kaydet
+                {app ? "Güncelle" : "Kaydet"}
               </button>
             </div>
           </form>
