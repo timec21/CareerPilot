@@ -8,6 +8,7 @@ import MainLayout from "./components/MainLayout";
 import Profile from "./pages/Profile";
 import Applications from "./pages/Applications"
 import Goals from "./pages/Goals";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -46,6 +47,8 @@ function App() {
         }
       />
       <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
+      <Route path="*" element={<NotFound />} />
+
     </Routes>
   );
 }
