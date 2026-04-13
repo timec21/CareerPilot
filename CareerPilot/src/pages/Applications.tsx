@@ -1,45 +1,93 @@
-import { useApplications } from "../context/ApplicationContext";
-import { useNavigate } from "react-router-dom";
-import ApplicationCard from "../components/ApplicationCard";
 import { useState } from "react";
-import ApplicationModal from "../components/ApplicationModal";
 import type { Application } from "../context/ApplicationContext";
+import { useApplications } from "../context/ApplicationContext";
+import ApplicationCard from "../components/ApplicationCard";
+import ApplicationModal from "../components/ApplicationModal";
+
+const statusOptions = ["Tümü", "Hazırlanıyor", "Başvuruldu", "Mülakat", "Olumlu", "Olumsuz"];
 
 function Applications() {
   const { applications } = useApplications();
-  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [editApp, setEditApp] = useState<Application | null>(null);
+  const [search, setSearch] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("Tümü");
+  const [sortOrder, setSortOrder] = useState("newest");
+
+  // Filtreleme ve arama
+  const filtered = applications
+    .filter((app) => {
+      const matchSearch =
+        app.company.toLowerCase().includes(search.toLowerCase()) ||
+        app.position.toLowerCase().includes(search.toLowerCase());
+      const matchStatus =
+        selectedStatus === "Tümü" || app.status === selectedStatus;
+      return matchSearch && matchStatus;
+    })
+    .sort((a, b) => {
+      if (sortOrder === "newest") return b.date.localeCompare(a.date);
+      if (sortOrder === "oldest") return a.date.localeCompare(b.date);
+      return 0;
+    });
 
   return (
     <div className="container mt-4">
+      {/* Başlık */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Başvurularım</h2>
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-outline-secondary"
-            onClick={() => navigate("/")}
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          + Yeni Başvuru
+        </button>
+      </div>
+
+      {/* Arama ve Filtreler */}
+      <div className="row g-2 mb-4">
+        <div className="col-12 col-md-5">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Şirket veya pozisyon ara..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="col-6 col-md-4">
+          <select
+            className="form-select"
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            ← Dashboard
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => setShowModal(true)}
+            {statusOptions.map((s) => (
+              <option key={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+        <div className="col-6 col-md-3">
+          <select
+            className="form-select"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
           >
-            + Yeni Başvuru
-          </button>
+            <option value="newest">En Yeni</option>
+            <option value="oldest">En Eski</option>
+          </select>
         </div>
       </div>
 
+      {/* Sonuç sayısı */}
+      <p className="text-muted mb-3">
+        {filtered.length} başvuru bulundu
+      </p>
+
       {/* Kartlar */}
-      {applications.length === 0 ? (
+      {filtered.length === 0 ? (
         <div className="text-center mt-5 text-muted">
-          <h5>Henüz başvuru eklenmedi</h5>
-          <p>Yeni başvuru eklemek için butona tıkla</p>
+          <h5>Sonuç bulunamadı</h5>
+          <p>Farklı bir arama veya filtre dene</p>
         </div>
       ) : (
         <div className="row g-4">
-          {applications.map((app) => (
+          {filtered.map((app) => (
             <div className="col-12 col-md-6 col-lg-3 d-flex" key={app.id}>
               <ApplicationCard app={app} onEdit={(app) => setEditApp(app)} />
             </div>
