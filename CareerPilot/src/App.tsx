@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import MainLayout from "./components/MainLayout";
 import Profile from "./pages/Profile";
 import Applications from "./pages/Applications"
+import Goals from "./pages/Goals";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
     </Routes>
   );
 }

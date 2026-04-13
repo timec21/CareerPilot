@@ -5,13 +5,16 @@ import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ApplicationProvider } from "./context/ApplicationContext";
+import { GoalProvider } from "./context/GoalContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <ApplicationProvider>
-          <App />
+          <GoalProvider>
+            <App />
+          </GoalProvider>
         </ApplicationProvider>
       </AuthProvider>
     </BrowserRouter>
