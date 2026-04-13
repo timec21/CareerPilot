@@ -4,7 +4,7 @@ import { useApplications } from "../context/ApplicationContext";
 
 interface Props {
   onClose: () => void;
-  app?: Application; // düzenleme için opsiyonel
+  app?: Application; 
 }
 
 const emptyForm = {

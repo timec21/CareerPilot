@@ -1,29 +1,43 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-// ÖNEMLİ: Dropdown'ın çalışması için JS dosyasını import etmelisiniz
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { useAuth } from "../context/AuthContext";
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  // TypeScript hatasını önlemek için 'path' tipini 'string' olarak belirledik
+  const goTo = (path: string): void => {
+    navigate(path);
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3">
       <div className="container-fluid">
-        {/* 1. Sol Kısım: Profil ve Logo */}
-        <a className="navbar-brand d-flex align-items-center" href="/profile">
-          <img 
-            src="logo.png" // logo.png yerine örnek görsel
-            alt="Profil" 
-            width="70" 
-            height="70" 
-            className="rounded-circle me-2 " 
+        {/* 1. Sol Kısım: Logo ve Profil (Geri Geldi) */}
+        <div
+          className="navbar-brand d-flex align-items-center"
+          style={{ cursor: "pointer" }}
+          onClick={() => goTo("/profile")}
+        >
+          <img
+            src="logo.png"
+            alt="Logo"
+            width="50"
+            height="50"
+            className="rounded-circle me-2"
           />
           <span className="fw-bold">Profil</span>
-        </a>
+        </div>
 
-        {/* Mobil Menü Butonu (Hamburger) */}
-        <button 
-          className="navbar-toggler" 
-          type="button" 
-          data-bs-toggle="collapse" 
+        {/* Mobil Menü Butonu */}
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
           data-bs-target="#navbarContent"
           aria-controls="navbarContent"
           aria-expanded="false"
@@ -34,58 +48,107 @@ const Navbar = () => {
 
         {/* 2. Orta ve Sağ İçerik */}
         <div className="collapse navbar-collapse" id="navbarContent">
-          
-          {/* Anasayfa Linki */}
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link active" href="/">Anasayfa</a>
+              <button
+                className="nav-link btn btn-link border-0 text-decoration-none"
+                onClick={() => goTo("/")}
+              >
+                Anasayfa
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className="nav-link btn btn-link border-0 text-decoration-none"
+                onClick={() => goTo("/applications")}
+              >
+                Başvurularım
+              </button>
+            </li>
+            {/* Öğrenme Planı (Geri Geldi) */}
+            <li className="nav-item">
+              <button
+                className="nav-link btn btn-link border-0 text-decoration-none"
+                onClick={() => goTo("/ogrenme-plani")}
+              >
+                Öğrenme Planı
+              </button>
             </li>
           </ul>
 
-          {/* 3. Arama Çubuğu (Merkezde) */}
-          <form className="d-flex mx-auto w-75 w-lg-25 my-2 my-lg-0" role="search">
+          {/* 3. Arama Çubuğu */}
+          <form
+            className="d-flex mx-auto w-50 w-lg-25 my-2 my-lg-0"
+            onSubmit={(e: React.FormEvent) => e.preventDefault()}
+          >
             <div className="input-group">
-              <input 
-                className="form-control" 
-                type="search" 
-                placeholder="Ara..." 
-                aria-label="Search" 
+              <input
+                className="form-control"
+                type="search"
+                placeholder="Ara..."
               />
-              <button className="btn btn-outline-secondary" type="submit">
+              <button className="btn btn-outline-secondary" type="button">
                 <i className="bi bi-search"></i>
               </button>
             </div>
           </form>
 
-          {/* 4. Sağ Taraf: Gece Modu ve Dropdown Menü */}
+          {/* 4. Sağ Taraf: Tema ve Dropdown */}
           <ul className="navbar-nav ms-auto align-items-center">
+            {/* Tema (Gece Modu) Butonu (Geri Geldi) */}
             <li className="nav-item me-2">
               <button className="btn btn-link nav-link" type="button">
                 <i className="bi bi-moon-fill"></i>
               </button>
             </li>
 
-            {/* Dropdown Menü Başlangıcı */}
+            {/* Dropdown Menü */}
             <li className="nav-item dropdown">
-              <a 
-                className="nav-link dropdown-toggle btn btn-outline-ligth px-3" 
-                href="#" 
+              <button
+                className="nav-link dropdown-toggle btn btn-link border-0 text-dark text-decoration-none"
                 id="navbarDropdown"
-                role="button" 
-                data-bs-toggle="dropdown" 
+                data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
                 Menü
-              </a>
-              <ul className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
-                <li><a className="dropdown-item" href="/settings"><i className="bi bi-gear me-2"></i>Ayarlar</a></li>
-                <li><a className="dropdown-item" href="/messages"><i className="bi bi-envelope me-2"></i>Mesajlar</a></li>
-                <li><hr className="dropdown-divider" /></li>
-                <li><a className="dropdown-item text-danger" href="/logout"><i className="bi bi-box-arrow-right me-2"></i>Çıkış Yap</a></li>
+              </button>
+              <ul
+                className="dropdown-menu dropdown-menu-end shadow border-0"
+                aria-labelledby="navbarDropdown"
+              >
+                <li>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => goTo("/settings")}
+                  >
+                    <i className="bi bi-gear me-2"></i>Ayarlar
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => goTo("/messages")}
+                  >
+                    <i className="bi bi-envelope me-2"></i>Mesajlar
+                  </button>
+                </li>
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+                <li>
+                  <button
+                    className="dropdown-item text-danger"
+                    onClick={() => {
+                      logout();
+                      navigate("/login");
+                    }}
+                  >
+                    <i className="bi bi-box-arrow-right me-2"></i>Çıkış Yap
+                  </button>
+                </li>
               </ul>
             </li>
           </ul>
-
         </div>
       </div>
     </nav>
