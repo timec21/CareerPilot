@@ -69,7 +69,7 @@ const Navbar: React.FC = () => {
             <li className="nav-item">
               <button
                 className="nav-link btn btn-link border-0 text-decoration-none"
-                onClick={() => goTo("/ogrenme-plani")}
+                onClick={() => goTo("/goals")}
               >
                 Öğrenme Planı
               </button>

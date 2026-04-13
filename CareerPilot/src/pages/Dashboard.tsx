@@ -11,15 +11,41 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useNavigate } from "react-router-dom";
+import { useApplications } from "../context/ApplicationContext";
+import type { Application } from "../context/ApplicationContext";
 
-const statusData = [
-  { ay: "Ocak", başvuru: 2, mülakat: 1, olumlu: 0 },
-  { ay: "Şubat", başvuru: 4, mülakat: 2, olumlu: 1 },
-  { ay: "Mart", başvuru: 3, mülakat: 3, olumlu: 1 },
-  { ay: "Nisan", başvuru: 5, mülakat: 2, olumlu: 2 },
-];
+interface ChartProps {
+  applications: Application[];
+}
 
-function StatusChart() {
+function StatusChart({ applications }: ChartProps) {
+  
+  // Aylara göre grupla
+  const monthNames: Record<string, string> = {
+    "01": "Ocak", "02": "Şubat", "03": "Mart", "04": "Nisan",
+    "05": "Mayıs", "06": "Haziran", "07": "Temmuz", "08": "Ağustos",
+    "09": "Eylül", "10": "Ekim", "11": "Kasım", "12": "Aralık",
+  };
+
+  const groupedData: Record<string, { ay: string; başvuru: number; mülakat: number; olumlu: number }> = {};
+
+  applications.forEach((app) => {
+    const month = app.date.slice(5, 7); // "2024-04-01" → "04"
+    const ayAdi = monthNames[month];
+
+    if (!groupedData[month]) {
+      groupedData[month] = { ay: ayAdi, başvuru: 0, mülakat: 0, olumlu: 0 };
+    }
+
+    groupedData[month].başvuru += 1;
+    if (app.status === "Mülakat") groupedData[month].mülakat += 1;
+    if (app.status === "Olumlu") groupedData[month].olumlu += 1;
+  });
+
+  const statusData = Object.keys(groupedData)
+    .sort()
+    .map((key) => groupedData[key]);
+
   return (
     <div className="card mt-4 p-3">
       <h5 className="mb-3">Aylık Başvuru Takibi</h5>
@@ -42,32 +68,33 @@ function StatusChart() {
 function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { applications } = useApplications();
 
   const stats = [
     {
       title: "Toplam Başvuru",
-      value: 12,
+      value: applications.length,
       icon: <FaBriefcase size={28} />,
       color: "primary",
       path: "/applications",
     },
     {
       title: "Bekleyen Görüşme",
-      value: 3,
+      value: applications.filter((app) => app.status === "Mülakat").length,
       icon: <FaClock size={28} />,
       color: "warning",
       path: "/applications",
     },
     {
       title: "Tamamlanan Görev",
-      value: 8,
+      value: applications.filter((app) => app.status === "Olumlu").length,
       icon: <FaCheckCircle size={28} />,
       color: "success",
       path: "/goals",
     },
     {
       title: "Favoriler",
-      value: 5,
+      value: applications.filter((app) => app.favorite).length,
       icon: <FaStar size={28} />,
       color: "danger",
       path: "/applications",
@@ -107,7 +134,7 @@ function Dashboard() {
       </div>
 
       {/* Grafik */}
-      <StatusChart />
+      <StatusChart applications={applications} />
     </div>
   );
 }
