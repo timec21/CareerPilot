@@ -6,7 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import MainLayout from "./components/MainLayout";
 import Profile from "./pages/Profile";
-import Applications from "./pages/Applications"
+import Applications from "./pages/Applications";
 import Goals from "./pages/Goals";
 import NotFound from "./pages/NotFound";
 
@@ -36,19 +36,25 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute>
+              <Applications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/goals"
+          element={
+            <ProtectedRoute>
+              <Goals />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFound />} />
       </Route>
-      <Route path="/" element={<Navigate to="/dashboard" />} />
-      <Route
-        path="/applications"
-        element={
-          <ProtectedRoute>
-            <Applications />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
-      <Route path="*" element={<NotFound />} />
-
     </Routes>
   );
 }
