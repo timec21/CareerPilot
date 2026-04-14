@@ -10,6 +10,7 @@ import Applications from "./pages/Applications";
 import Goals from "./pages/Goals";
 import NotFound from "./pages/NotFound";
 import Messages from "./pages/Messages";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
         />
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         
       </Route>
     </Routes>
