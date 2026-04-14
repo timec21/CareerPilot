@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Applications from "./pages/Applications";
 import Goals from "./pages/Goals";
 import NotFound from "./pages/NotFound";
+import Messages from "./pages/Messages";
 
 function App() {
   return (
@@ -53,7 +54,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
+        
       </Route>
     </Routes>
   );

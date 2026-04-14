@@ -6,6 +6,7 @@ import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ApplicationProvider } from "./context/ApplicationContext";
 import { GoalProvider } from "./context/GoalContext";
+import { MessageProvider } from "./context/MessageContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -13,7 +14,9 @@ createRoot(document.getElementById("root")!).render(
       <AuthProvider>
         <ApplicationProvider>
           <GoalProvider>
-            <App />
+            <MessageProvider>
+              <App />
+            </MessageProvider>
           </GoalProvider>
         </ApplicationProvider>
       </AuthProvider>
