@@ -36,7 +36,7 @@ export const initialMessages = [
     subject: "Pozisyon Güncelleme",
     content: "Başvurduğunuz Frontend Engineer pozisyonu için değerlendirme sürecimiz devam etmektedir.",
     date: "2024-04-05",
-    read: true,
+    read: false,
     type: "company",
   },
   {
