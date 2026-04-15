@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useGoals } from "../context/GoalContext";
 import { FaTrash, FaPlus } from "react-icons/fa";
+import { useProfile } from "../context/ProfileContext";
 
 function Goals() {
   const { goals, addGoal, deleteGoal, toggleGoal } = useGoals();
+  const { addSkill, removeSkill } = useProfile();
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -23,12 +25,29 @@ function Goals() {
     setShowForm(false);
   };
 
+  const handleToggleGoal = (goal: any) => {
+    // 1. Durumu değiştir
+    toggleGoal(goal.id);
+
+    // 2. Eğer hedef tamamlanmışsa (completed: true), butona basınca FALSE olacak demektir -> SİL
+    if (goal.completed) {
+      removeSkill(goal.title);
+    }
+    // 3. Eğer hedef tamamlanmamışsa (completed: false), butona basınca TRUE olacak -> EKLE
+    else {
+      addSkill(goal.title);
+    }
+  };
+
   return (
     <div className="container mt-4">
       {/* Başlık */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Öğrenme Planı</h2>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+        <button
+          className="btn btn-primary"
+          onClick={() => setShowForm(!showForm)}
+        >
           <FaPlus /> Hedef Ekle
         </button>
       </div>
@@ -37,7 +56,9 @@ function Goals() {
       <div className="card p-3 mb-4">
         <div className="d-flex justify-content-between mb-1">
           <span>Genel İlerleme</span>
-          <span>{completed} / {total} tamamlandı</span>
+          <span>
+            {completed} / {total} tamamlandı
+          </span>
         </div>
         <div className="progress">
           <div
@@ -60,7 +81,9 @@ function Goals() {
                   className="form-control"
                   placeholder="Hedef başlığı"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -70,7 +93,9 @@ function Goals() {
                   className="form-control"
                   placeholder="Açıklama"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                 />
               </div>
               <div className="col-12 col-md-2">
@@ -79,7 +104,9 @@ function Goals() {
                   className="form-control"
                   placeholder="Kategori"
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
                 />
               </div>
               <div className="col-12 col-md-2">
@@ -96,14 +123,21 @@ function Goals() {
       <div className="row g-3">
         {goals.map((goal) => (
           <div className="col-12 col-md-6 col-lg-4" key={goal.id}>
-            <div className={`card h-100 ${goal.completed ? "border-success" : ""}`}>
+            <div
+              className={`card h-100 ${goal.completed ? "border-success" : ""}`}
+            >
               <div className="card-body">
                 <div className="d-flex justify-content-between align-items-start">
                   <div>
-                    <h5 className={`card-title ${goal.completed ? "text-decoration-line-through text-muted" : ""}`}>
+                    <h5
+                      className={`card-title ${goal.completed ? "text-decoration-line-through text-muted" : ""}`}
+                    >
                       {goal.title}
                     </h5>
-                    <p className="text-muted mb-1" style={{ fontSize: "0.85rem" }}>
+                    <p
+                      className="text-muted mb-1"
+                      style={{ fontSize: "0.85rem" }}
+                    >
                       {goal.description}
                     </p>
                     <span className="badge bg-secondary">{goal.category}</span>
@@ -113,10 +147,11 @@ function Goals() {
               <div className="card-footer bg-transparent d-flex justify-content-between">
                 <button
                   className={`btn btn-sm ${goal.completed ? "btn-outline-secondary" : "btn-outline-success"}`}
-                  onClick={() => toggleGoal(goal.id)}
+                  onClick={() => handleToggleGoal(goal)} // Artık yeni fonksiyonumuzu çağırıyoruz
                 >
                   {goal.completed ? "Geri Al" : "Tamamlandı"}
                 </button>
+
                 <button
                   className="btn btn-sm btn-outline-danger"
                   onClick={() => deleteGoal(goal.id)}
