@@ -11,6 +11,7 @@ import Goals from "./pages/Goals";
 import NotFound from "./pages/NotFound";
 import Messages from "./pages/Messages";
 import Settings from "./pages/Settings";
+import ProfilePage from "./pages/Profile";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         
       </Route>
     </Routes>
