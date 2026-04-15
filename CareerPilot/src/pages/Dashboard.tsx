@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useApplications } from "../context/ApplicationContext";
 import type { Application } from "../context/ApplicationContext";
+import { useGoals } from "../context/GoalContext";
 
 interface ChartProps {
   applications: Application[];
@@ -69,6 +70,8 @@ function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { applications } = useApplications();
+  const { goals } = useGoals();
+  const completedGoalsCount = goals.filter((goal) => goal.completed).length;
 
   const stats = [
     {
@@ -87,7 +90,8 @@ function Dashboard() {
     },
     {
       title: "Tamamlanan Görev",
-      value: applications.filter((app) => app.status === "Olumlu").length,
+      // 4. Buradaki mantığı goals üzerinden güncelle
+      value: completedGoalsCount, 
       icon: <FaCheckCircle size={28} />,
       color: "success",
       path: "/goals",
