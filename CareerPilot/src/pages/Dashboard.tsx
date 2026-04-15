@@ -20,15 +20,26 @@ interface ChartProps {
 }
 
 function StatusChart({ applications }: ChartProps) {
-  
   // Aylara göre grupla
   const monthNames: Record<string, string> = {
-    "01": "Ocak", "02": "Şubat", "03": "Mart", "04": "Nisan",
-    "05": "Mayıs", "06": "Haziran", "07": "Temmuz", "08": "Ağustos",
-    "09": "Eylül", "10": "Ekim", "11": "Kasım", "12": "Aralık",
+    "01": "Ocak",
+    "02": "Şubat",
+    "03": "Mart",
+    "04": "Nisan",
+    "05": "Mayıs",
+    "06": "Haziran",
+    "07": "Temmuz",
+    "08": "Ağustos",
+    "09": "Eylül",
+    "10": "Ekim",
+    "11": "Kasım",
+    "12": "Aralık",
   };
 
-  const groupedData: Record<string, { ay: string; başvuru: number; mülakat: number; olumlu: number }> = {};
+  const groupedData: Record<
+    string,
+    { ay: string; başvuru: number; mülakat: number; olumlu: number }
+  > = {};
 
   applications.forEach((app) => {
     const month = app.date.slice(5, 7); // "2024-04-01" → "04"
@@ -57,9 +68,24 @@ function StatusChart({ applications }: ChartProps) {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="başvuru" stroke="#0d6efd" strokeWidth={2} />
-          <Line type="monotone" dataKey="mülakat" stroke="#ffc107" strokeWidth={2} />
-          <Line type="monotone" dataKey="olumlu" stroke="#198754" strokeWidth={2} />
+          <Line
+            type="monotone"
+            dataKey="başvuru"
+            stroke="#0d6efd"
+            strokeWidth={2}
+          />
+          <Line
+            type="monotone"
+            dataKey="mülakat"
+            stroke="#ffc107"
+            strokeWidth={2}
+          />
+          <Line
+            type="monotone"
+            dataKey="olumlu"
+            stroke="#198754"
+            strokeWidth={2}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -90,18 +116,17 @@ function Dashboard() {
     },
     {
       title: "Tamamlanan Görev",
-      // 4. Buradaki mantığı goals üzerinden güncelle
-      value: completedGoalsCount, 
+      value: completedGoalsCount,
       icon: <FaCheckCircle size={28} />,
       color: "success",
-      path: "/goals",
+      path: "/goals?filter=completed", // Filtre parametresi ekledik
     },
     {
       title: "Favoriler",
       value: applications.filter((app) => app.favorite).length,
       icon: <FaStar size={28} />,
       color: "danger",
-      path: "/applications",
+      path: "/applications?filter=favorites", // Filtre parametresi ekledik
     },
   ];
 

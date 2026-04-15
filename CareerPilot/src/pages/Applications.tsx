@@ -3,6 +3,7 @@ import type { Application } from "../context/ApplicationContext";
 import { useApplications } from "../context/ApplicationContext";
 import ApplicationCard from "../components/ApplicationCard";
 import ApplicationModal from "../components/ApplicationModal";
+import { useLocation } from "react-router-dom"; // 1. Bunu ekle
 
 const statusOptions = ["Tümü", "Hazırlanıyor", "Başvuruldu", "Mülakat", "Olumlu", "Olumsuz"];
 
@@ -14,15 +15,25 @@ function Applications() {
   const [selectedStatus, setSelectedStatus] = useState("Tümü");
   const [sortOrder, setSortOrder] = useState("newest");
 
+  // 2. URL'deki filtreyi yakala
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const isFavoriteFilter = queryParams.get("filter") === "favorites";
+
   // Filtreleme ve arama
   const filtered = applications
     .filter((app) => {
       const matchSearch =
         app.company.toLowerCase().includes(search.toLowerCase()) ||
         app.position.toLowerCase().includes(search.toLowerCase());
+      
       const matchStatus =
         selectedStatus === "Tümü" || app.status === selectedStatus;
-      return matchSearch && matchStatus;
+
+      // 3. Eğer URL'de favori filtresi varsa sadece favorileri, yoksa normal filtreyi uygula
+      const matchFavorite = !isFavoriteFilter || app.favorite;
+
+      return matchSearch && matchStatus && matchFavorite;
     })
     .sort((a, b) => {
       if (sortOrder === "newest") return b.date.localeCompare(a.date);
@@ -34,7 +45,8 @@ function Applications() {
     <div className="container mt-4">
       {/* Başlık */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Başvurularım</h2>
+        {/* Başlığı filtreye göre dinamik yaptık */}
+        <h2>{isFavoriteFilter ? "Favori Başvurularım" : "Başvurularım"}</h2>
         <button className="btn btn-primary" onClick={() => setShowModal(true)}>
           + Yeni Başvuru
         </button>
@@ -74,12 +86,22 @@ function Applications() {
         </div>
       </div>
 
-      {/* Sonuç sayısı */}
-      <p className="text-muted mb-3">
-        {filtered.length} başvuru bulundu
-      </p>
+      {/* Sonuç sayısı ve Temizleme Butonu */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <p className="text-muted mb-0">
+          {filtered.length} başvuru bulundu
+        </p>
+        {isFavoriteFilter && (
+          <button 
+            className="btn btn-sm btn-link text-decoration-none" 
+            onClick={() => window.location.href='/applications'}
+          >
+            Tüm Başvuruları Göster
+          </button>
+        )}
+      </div>
 
-      {/* Kartlar */}
+      {/* Kartlar kısmı aynı kalıyor */}
       {filtered.length === 0 ? (
         <div className="text-center mt-5 text-muted">
           <h5>Sonuç bulunamadı</h5>
