@@ -8,20 +8,23 @@ import { ApplicationProvider } from "./context/ApplicationContext";
 import { GoalProvider } from "./context/GoalContext";
 import { MessageProvider } from "./context/MessageContext";
 import { ProfileProvider } from "./context/ProfileContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <ProfileProvider>
-          <ApplicationProvider>
-            <GoalProvider>
-              <MessageProvider>
-                <App />
-              </MessageProvider>
-            </GoalProvider>
-          </ApplicationProvider>
-        </ProfileProvider>
+        <ThemeProvider>
+          <ProfileProvider>
+            <ApplicationProvider>
+              <GoalProvider>
+                <MessageProvider>
+                  <App />
+                </MessageProvider>
+              </GoalProvider>
+            </ApplicationProvider>
+          </ProfileProvider>
+        </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
