@@ -20,71 +20,102 @@ interface ChartProps {
 }
 
 function StatusChart({ applications }: ChartProps) {
-  // Aylara göre grupla
-  const monthNames: Record<string, string> = {
-    "01": "Ocak",
-    "02": "Şubat",
-    "03": "Mart",
-    "04": "Nisan",
-    "05": "Mayıs",
-    "06": "Haziran",
-    "07": "Temmuz",
-    "08": "Ağustos",
-    "09": "Eylül",
-    "10": "Ekim",
-    "11": "Kasım",
-    "12": "Aralık",
+  const statusColors: Record<Application["status"], string> = {
+    Hazırlanıyor: "#6c757d",
+    Başvuruldu: "#0d6efd",
+    Mülakat: "#ffc107",
+    Olumlu: "#198754",
+    Olumsuz: "#dc3545",
   };
 
-  const groupedData: Record<
-    string,
-    { ay: string; başvuru: number; mülakat: number; olumlu: number }
-  > = {};
+  // Tarihe göre sırala
+  const sorted = [...applications].sort((a, b) => a.date.localeCompare(b.date));
 
-  applications.forEach((app) => {
-    const month = app.date.slice(5, 7); // "2024-04-01" → "04"
-    const ayAdi = monthNames[month];
+  // Recharts için veri hazırla
+  const data = sorted.map((app, index) => ({
+    index: index + 1,
+    company: app.company,
+    position: app.position,
+    status: app.status,
+    date: app.date,
+    color: statusColors[app.status],
+  }));
 
-    if (!groupedData[month]) {
-      groupedData[month] = { ay: ayAdi, başvuru: 0, mülakat: 0, olumlu: 0 };
+  // Custom nokta
+  const CustomDot = (props: any) => {
+    const { cx, cy, payload } = props;
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={7}
+        fill={statusColors[payload.status as Application["status"]]}
+        stroke="white"
+        strokeWidth={2}
+      />
+    );
+  };
+
+  // Custom tooltip
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const d = payload[0].payload;
+      return (
+        <div className="card p-2 shadow" style={{ fontSize: "0.85rem" }}>
+          <strong>{d.company}</strong>
+          <p className="mb-0 text-muted">{d.position}</p>
+          <p className="mb-0">{d.date}</p>
+          <span
+            className="badge"
+            style={{
+              backgroundColor: statusColors[d.status as Application["status"]],
+            }}
+          >
+            {d.status}
+          </span>
+        </div>
+      );
     }
-
-    groupedData[month].başvuru += 1;
-    if (app.status === "Mülakat") groupedData[month].mülakat += 1;
-    if (app.status === "Olumlu") groupedData[month].olumlu += 1;
-  });
-
-  const statusData = Object.keys(groupedData)
-    .sort()
-    .map((key) => groupedData[key]);
+    return null;
+  };
 
   return (
     <div className="card mt-4 p-3">
-      <h5 className="mb-3">Aylık Başvuru Takibi</h5>
-      <ResponsiveContainer width="100%" height={280}>
-        <LineChart data={statusData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="ay" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
+      <h5 className="mb-1">Başvuru Zaman Çizelgesi</h5>
+      <p className="text-muted mb-3" style={{ fontSize: "0.85rem" }}>
+        Noktanın üzerine gel, detayları gör
+      </p>
+
+      {/* Renk açıklaması */}
+      <div className="d-flex flex-wrap gap-3 mb-3">
+        {Object.entries(statusColors).map(([status, color]) => (
+          <div key={status} className="d-flex align-items-center gap-1">
+            <div
+              style={{
+                width: 12,
+                height: 12,
+                borderRadius: "50%",
+                backgroundColor: color,
+              }}
+            />
+            <small>{status}</small>
+          </div>
+        ))}
+      </div>
+
+      <ResponsiveContainer width="100%" height={200}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+          <YAxis hide />
+          <Tooltip content={<CustomTooltip />} />
           <Line
             type="monotone"
-            dataKey="başvuru"
-            stroke="#0d6efd"
+            dataKey="index"
+            stroke="#dee2e6"
             strokeWidth={2}
-          />
-          <Line
-            type="monotone"
-            dataKey="mülakat"
-            stroke="#ffc107"
-            strokeWidth={2}
-          />
-          <Line
-            type="monotone"
-            dataKey="olumlu"
-            stroke="#198754"
-            strokeWidth={2}
+            dot={<CustomDot />}
+            activeDot={{ r: 9 }}
           />
         </LineChart>
       </ResponsiveContainer>
@@ -112,7 +143,7 @@ function Dashboard() {
       value: applications.filter((app) => app.status === "Mülakat").length,
       icon: <FaClock size={28} />,
       color: "warning",
-      path: "/applications",
+      path: "/applications?filter=Mülakat", // ✅
     },
     {
       title: "Tamamlanan Görev",
