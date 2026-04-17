@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMessages } from "../context/MessageContext";
 import type { Message } from "../context/MessageContext";
-import { FaTrash, FaEnvelope, FaEnvelopeOpen, FaBuilding, FaUser } from "react-icons/fa";
+import { FaTrash, FaEnvelope, FaEnvelopeOpen } from "react-icons/fa";
 
 function Messages() {
   const { messages, markAsRead, deleteMessage } = useMessages();
@@ -10,8 +10,7 @@ function Messages() {
 
   const filtered = messages.filter((m) => {
     if (filter === "Okunmamış") return !m.read;
-    if (filter === "Şirket") return m.type === "company";
-    if (filter === "Kullanıcı") return m.type === "user";
+    if (filter === "Okunmuş") return m.read;
     return true;
   });
 
@@ -26,7 +25,7 @@ function Messages() {
 
       {/* Filtreler */}
       <div className="d-flex gap-2 mb-3">
-        {["Tümü", "Okunmamış", "Şirket", "Kullanıcı"].map((f) => (
+        {["Tümü", "Okunmamış", "Okunmuş"].map((f) => (
           <button
             key={f}
             className={`btn btn-sm ${filter === f ? "btn-primary" : "btn-outline-secondary"}`}
@@ -55,14 +54,13 @@ function Messages() {
                 <div className="card-body py-2">
                   <div className="d-flex justify-content-between align-items-start">
                     <div className="d-flex align-items-center gap-2">
-                      {/* Avatar */}
                       <div
-                        className={`rounded-circle d-flex align-items-center justify-content-center text-white fw-bold`}
+                        className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
                         style={{
                           width: 36,
                           height: 36,
                           fontSize: 14,
-                          backgroundColor: message.type === "company" ? "#0d6efd" : "#6f42c1",
+                          backgroundColor: "#0d6efd",
                           flexShrink: 0,
                         }}
                       >
@@ -95,15 +93,8 @@ function Messages() {
           {selectedMessage ? (
             <div className="card h-100">
               <div className="card-header d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center gap-2">
-                  {selectedMessage.type === "company" ? (
-                    <FaBuilding className="text-primary" />
-                  ) : (
-                    <FaUser className="text-purple" style={{ color: "#6f42c1" }} />
-                  )}
-                  <strong>{selectedMessage.from}</strong>
-                </div>
-                <div className="d-flex gap-2">
+                <strong>{selectedMessage.from}</strong>
+                <div className="d-flex gap-2 align-items-center">
                   {selectedMessage.read ? (
                     <FaEnvelopeOpen className="text-muted" />
                   ) : (
