@@ -12,9 +12,12 @@ import NotFound from "./pages/NotFound";
 import Messages from "./pages/Messages";
 import Settings from "./pages/Settings";
 import ProfilePage from "./pages/Profile";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
+    <>
     <Routes>
       {/* NAVBARSIZ SAYFALAR */}
       <Route path="/register" element={<Register />} />
@@ -62,7 +65,12 @@ function App() {
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         
       </Route>
+      
     </Routes>
+    <ToastContainer position="bottom-right" autoClose={3000} />
+    </>
+    
+    
   );
 }
 

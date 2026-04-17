@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Application } from "../context/ApplicationContext";
 import { useApplications } from "../context/ApplicationContext";
+import { toast } from 'react-toastify';
 
 interface Props {
   onClose: () => void;
@@ -31,8 +32,10 @@ function ApplicationModal({ onClose, app }: Props) {
     e.preventDefault();
     if (app) {
       updateApplication(app.id, formData);
+      toast.success("Başvuru başarıyla güncellendi!");
     } else {
       addApplication(formData);
+      toast.success("Yeni başvuru kaydedildi!");
     }
     onClose();
   };

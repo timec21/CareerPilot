@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useGoals } from "../context/GoalContext";
 import { FaTrash, FaPlus } from "react-icons/fa";
 import { useProfile } from "../context/ProfileContext";
-import { useLocation } from "react-router-dom"; // 1. Bunu ekle
+import { useLocation } from "react-router-dom"; 
+import { toast } from 'react-toastify';
 
 function Goals() {
   const { goals, addGoal, deleteGoal, toggleGoal } = useGoals();
@@ -41,8 +42,10 @@ function Goals() {
     toggleGoal(goal.id);
     if (goal.completed) {
       removeSkill(goal.title);
+      toast.info("Yetenek geri alındı.");
     } else {
       addSkill(goal.title);
+      toast.success(`${goal.title} yeteneklerine eklendi!`);
     }
   };
 

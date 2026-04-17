@@ -1,6 +1,7 @@
 import type { Application } from "../context/ApplicationContext";
 import { useApplications } from "../context/ApplicationContext";
 import { FaStar, FaRegStar, FaTrash, FaEdit } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const statusColors: Record<Application["status"], string> = {
   Hazırlanıyor: "secondary",
@@ -15,17 +16,37 @@ interface Props {
   onEdit: (app: Application) => void; // ekle
 }
 
-function ApplicationCard({ app, onEdit }: Props){
+function ApplicationCard({ app, onEdit }: Props) {
   const { deleteApplication, toggleFavorite } = useApplications();
+
+  // Favori işlemini sarmalayan fonksiyon
+  const handleFavorite = () => {
+    toggleFavorite(app.id);
+    // app.favorite o anki durumu olduğu için tersini kontrol ediyoruz
+    if (!app.favorite) {
+      toast.success(`${app.company} favorilere eklendi!`);
+    } else {
+      toast.info(`${app.company} favorilerden çıkarıldı.`);
+    }
+  };
+
+  // Silme işlemini sarmalayan fonksiyon
+  const handleDelete = () => {
+    if (
+      window.confirm(`${app.company} başvurusunu silmek istediğine emin misin?`)
+    ) {
+      deleteApplication(app.id);
+      toast.error("Başvuru silindi.");
+    }
+  };
 
   return (
     <div className="card h-100 w-100">
       <div className="card-body">
-        {/* Başlık ve Favori */}
         <div className="d-flex justify-content-between align-items-start mb-2">
           <h5 className="card-title mb-0">{app.company}</h5>
           <span
-            onClick={() => toggleFavorite(app.id)}
+            onClick={handleFavorite} 
             style={{ cursor: "pointer" }}
             className="text-warning"
           >
@@ -64,7 +85,7 @@ function ApplicationCard({ app, onEdit }: Props){
         </button>
         <button
           className="btn btn-sm btn-outline-danger"
-          onClick={() => deleteApplication(app.id)}
+          onClick={handleDelete} 
         >
           <FaTrash /> Sil
         </button>
