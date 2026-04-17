@@ -17,6 +17,7 @@ interface MessageContextType {
   messages: Message[];
   markAsRead: (id: number) => void;
   deleteMessage: (id: number) => void;
+  addMessage: (newMessage: Omit<Message, "id" | "read" | "date">) => void; 
   unreadCount: number;
 }
 
@@ -27,6 +28,18 @@ export function MessageProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem("messages");
     return saved ? JSON.parse(saved) : initialMessages;
   });
+
+  const addMessage = (newMessage: Omit<Message, "id" | "read" | "date">) => {
+    const messageWithDetails: Message = {
+      ...newMessage,
+      id: Date.now(),
+      read: false,
+      date: new Date().toLocaleDateString("tr-TR"), // Otomatik tarih
+    };
+    const updated = [messageWithDetails, ...messages]; // Yeni mesajı en üste ekle
+    setMessages(updated);
+    saveToStorage(updated);
+  };
 
   const saveToStorage = (msgs: Message[]) => {
     localStorage.setItem("messages", JSON.stringify(msgs));
@@ -49,7 +62,7 @@ export function MessageProvider({ children }: { children: ReactNode }) {
   const unreadCount = messages.filter((m) => !m.read).length;
 
   return (
-    <MessageContext.Provider value={{ messages, markAsRead, deleteMessage, unreadCount }}>
+    <MessageContext.Provider value={{ messages, markAsRead, deleteMessage, addMessage, unreadCount }}>
       {children}
     </MessageContext.Provider>
   );

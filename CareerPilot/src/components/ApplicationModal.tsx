@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Application } from "../context/ApplicationContext";
 import { useApplications } from "../context/ApplicationContext";
 import { toast } from 'react-toastify';
+import { useMessages } from "../context/MessageContext"; // 1. Import eklendi
 
 interface Props {
   onClose: () => void;
@@ -19,6 +20,7 @@ const emptyForm = {
 
 function ApplicationModal({ onClose, app }: Props) {
   const { addApplication, updateApplication } = useApplications();
+  const { addMessage } = useMessages(); // 2. Hook buraya eklendi
   const [formData, setFormData] = useState(app ?? emptyForm);
 
   const handleChange = (
@@ -30,11 +32,42 @@ function ApplicationModal({ onClose, app }: Props) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     if (app) {
       updateApplication(app.id, formData);
+      
+      // DURUM GÜNCELLEME MESAJLARI
+      if (formData.status === "Mülakat" && app.status !== "Mülakat") {
+        addMessage({
+          from: formData.company,
+          subject: "Mülakat Daveti",
+          content: `Sayın Aday, ${formData.position} pozisyonu için başvurunuz olumlu değerlendirilmiştir. Sizi mülakata davet etmek istiyoruz.`,
+          avatar: formData.company[0].toUpperCase(),
+          type: "company"
+        });
+      } else if (formData.status === "Olumlu" && app.status !== "Olumlu") {
+        addMessage({
+          from: formData.company,
+          subject: "İş Teklifi Hakkında",
+          content: `Tebrikler! ${formData.position} pozisyonu mülakat süreciniz başarıyla tamamlandı. Detaylar için sizinle iletişime geçeceğiz.`,
+          avatar: formData.company[0].toUpperCase(),
+          type: "company"
+        });
+      }
+
       toast.success("Başvuru başarıyla güncellendi!");
     } else {
       addApplication(formData);
+
+      // YENİ BAŞVURU MESAJI
+      addMessage({
+        from: formData.company,
+        subject: "Başvurunuz Alındı",
+        content: `Merhaba, ${formData.position} pozisyonuna yaptığınız başvuru başarıyla sistemimize ulaştı. İlginiz için teşekkür ederiz.`,
+        avatar: formData.company[0].toUpperCase(),
+        type: "company"
+      });
+
       toast.success("Yeni başvuru kaydedildi!");
     }
     onClose();
@@ -88,11 +121,11 @@ function ApplicationModal({ onClose, app }: Props) {
                   onChange={handleChange}
                   className="form-select"
                 >
-                  <option>Hazırlanıyor</option>
-                  <option>Başvuruldu</option>
-                  <option>Mülakat</option>
-                  <option>Olumlu</option>
-                  <option>Olumsuz</option>
+                  <option value="Hazırlanıyor">Hazırlanıyor</option>
+                  <option value="Başvuruldu">Başvuruldu</option>
+                  <option value="Mülakat">Mülakat</option>
+                  <option value="Olumlu">Olumlu</option>
+                  <option value="Olumsuz">Olumsuz</option>
                 </select>
               </div>
 
